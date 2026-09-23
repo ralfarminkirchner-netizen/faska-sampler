@@ -1,20 +1,20 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #fff4e8;
-  --color-surface: #fffaf4;
-  --color-surface-2: #ffe8d2;
-  --color-surface-3: #ffd4b0;
+  --color-bg: #fff6ea;
+  --color-surface: #fffdf8;
+  --color-surface-2: #ffe4cc;
+  --color-surface-3: #ffc99a;
   --color-fg: #3a2418;
-  --color-muted: #8a6552;
+  --color-muted: #8a5a45;
   --color-subtle: #b08974;
-  --color-accent: #e15a3a;
+  --color-accent: #f15a38;
   --color-accent-fg: #fff8f3;
-  --color-rec: #c4233d;
+  --color-rec: #e02348;
   --color-lcd: #1f6b45;
-  --color-lcd-dim: #e7f6ea;
-  --color-border: #efc8a8;
-  --color-pad: #ffd8b8;
+  --color-lcd-dim: #e5f6ea;
+  --color-border: #f0c4a4;
+  --color-pad: #ffc48a;
   --color-ok: #2f8a5b;
 
   --font-sans: "Nunito", "Segoe UI", system-ui, sans-serif;
@@ -81,7 +81,7 @@
 
 .panel {
   background: var(--color-surface);
-  box-shadow: 0 8px 0 color-mix(in oklab, var(--color-border) 80%, var(--color-fg));
+  box-shadow: 0 10px 0 color-mix(in oklab, var(--color-border) 70%, var(--color-fg));
   border-radius: var(--radius-xl);
 }
 
@@ -89,25 +89,49 @@
   background: var(--color-lcd-dim);
   color: var(--color-lcd);
   font-family: var(--font-sans);
-  font-weight: 700;
+  font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
 
 .pad-key {
-  min-height: 88px;
-  background:
-    linear-gradient(180deg, #fff1e4 0%, var(--color-pad) 100%);
+  min-height: 0;
+  background: linear-gradient(180deg, #fff6ea 0%, var(--color-pad) 100%);
   box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, 0.7),
-    0 6px 0 #e7b08a;
+    inset 0 3px 0 rgba(255, 255, 255, 0.8),
+    0 8px 0 #e39a62;
+}
+
+.pad-key[data-row="0"] {
+  background: linear-gradient(180deg, #fff6c8 0%, #ffd15a 100%);
+  box-shadow:
+    inset 0 3px 0 rgba(255, 255, 255, 0.8),
+    0 8px 0 #e0a020;
+}
+.pad-key[data-row="1"] {
+  background: linear-gradient(180deg, #ffe8d4 0%, #ffb072 100%);
+  box-shadow:
+    inset 0 3px 0 rgba(255, 255, 255, 0.8),
+    0 8px 0 #e08040;
+}
+.pad-key[data-row="2"] {
+  background: linear-gradient(180deg, #ffd9cc 0%, #ff8a62 100%);
+  box-shadow:
+    inset 0 3px 0 rgba(255, 255, 255, 0.8),
+    0 8px 0 #d85a38;
+}
+.pad-key[data-row="3"] {
+  background: linear-gradient(180deg, #e5f8ec 0%, #7dcea0 100%);
+  box-shadow:
+    inset 0 3px 0 rgba(255, 255, 255, 0.8),
+    0 8px 0 #4ea874;
 }
 
 .pad-key[data-on="true"] {
-  background: color-mix(in oklab, var(--color-accent) 55%, white);
+  background: var(--color-accent);
   color: var(--color-accent-fg);
   box-shadow:
-    inset 0 0 0 3px var(--color-accent),
-    0 6px 0 #c4472c;
+    inset 0 0 0 4px color-mix(in oklab, var(--color-accent) 70%, white),
+    0 8px 0 #c4472c;
 }
 
 .step-on {

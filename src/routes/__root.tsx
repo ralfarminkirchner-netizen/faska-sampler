@@ -11,7 +11,7 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: APP_NAME },
-      { name: "theme-color", content: "#fff4e8" },
+      { name: "theme-color", content: "#fff6ea" },
       {
         name: "description",
         content: "FASKA SAMPLER — Stimme, Pads und Beats, groß und freundlich.",
