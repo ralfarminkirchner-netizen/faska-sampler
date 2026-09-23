@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #fff4e8;
+  --color-surface: #fffaf4;
+  --color-surface-2: #ffe8d2;
+  --color-surface-3: #ffd4b0;
+  --color-fg: #3a2418;
+  --color-muted: #8a6552;
+  --color-subtle: #b08974;
+  --color-accent: #e15a3a;
+  --color-accent-fg: #fff8f3;
+  --color-rec: #c4233d;
+  --color-lcd: #1f6b45;
+  --color-lcd-dim: #e7f6ea;
+  --color-border: #efc8a8;
+  --color-pad: #ffd8b8;
+  --color-ok: #2f8a5b;
+
+  --font-sans: "Nunito", "Segoe UI", system-ui, sans-serif;
+  --font-display: "Nunito", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Nunito", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-xs: 10px;
+  --radius-sm: 14px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+
+  --shadow-border: 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --shadow-border-hover: 0 0 0 1px rgba(255, 255, 255, 0.14);
+
+  --motion-stagger: 40ms;
+  --motion-micro: 80ms;
+  --motion-quick: 150ms;
+  --motion-fast: 250ms;
+  --motion-medium: 350ms;
+  --motion-slow: 400ms;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-scale-modal: 0.96;
+  --grid-template-columns-16: repeat(16, minmax(0, 1fr));
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-size: 18px;
+    line-height: 1.5;
+    min-height: 100dvh;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+
+  #root, #app {
+    min-height: 100dvh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.panel {
+  background: var(--color-surface);
+  box-shadow: 0 8px 0 color-mix(in oklab, var(--color-border) 80%, var(--color-fg));
+  border-radius: var(--radius-xl);
+}
+
+.lcd {
+  background: var(--color-lcd-dim);
+  color: var(--color-lcd);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.pad-key {
+  min-height: 88px;
+  background:
+    linear-gradient(180deg, #fff1e4 0%, var(--color-pad) 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.7),
+    0 6px 0 #e7b08a;
+}
+
+.pad-key[data-on="true"] {
+  background: color-mix(in oklab, var(--color-accent) 55%, white);
+  color: var(--color-accent-fg);
+  box-shadow:
+    inset 0 0 0 3px var(--color-accent),
+    0 6px 0 #c4472c;
+}
+
+.step-on {
+  background: var(--color-accent);
+  color: var(--color-accent-fg);
+}
+
+.step-play {
+  outline: 1px solid var(--color-fg);
+  outline-offset: 1px;
+}
