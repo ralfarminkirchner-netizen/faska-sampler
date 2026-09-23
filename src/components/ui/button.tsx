@@ -10,17 +10,17 @@ const buttonVariants = cva(
       variant: {
         default: "bg-fg text-bg hover:bg-fg/90",
         accent: "bg-accent text-accent-fg hover:bg-accent/90",
-        rec: "bg-rec text-accent-fg hover:bg-rec/90",
+        rec: "bg-rec text-fg hover:bg-rec/90",
         secondary: "bg-surface-2 text-fg ring-1 ring-border hover:bg-surface-3",
         ghost: "text-muted hover:bg-surface-2 hover:text-fg",
         outline: "ring-1 ring-border text-fg hover:bg-surface-2",
       },
       size: {
-        default: "h-12 px-4 text-base",
-        sm: "h-11 px-3 text-sm",
-        lg: "h-14 px-6 text-lg",
-        icon: "size-12",
-        iconSm: "size-11",
+        default: "h-10 px-3.5 text-sm",
+        sm: "h-8 px-2.5 text-xs",
+        lg: "h-12 px-5 text-sm",
+        icon: "size-10",
+        iconSm: "size-8",
       },
     },
     defaultVariants: {

@@ -726,11 +726,11 @@ export function factoryPatterns(): boolean[][][] {
 
 export const PATTERN_NAMES = [
   "House",
-  "Boom",
+  "Boom-Bap",
   "Trap",
   "Break",
-  "Beat 5",
-  "Beat 6",
-  "Beat 7",
-  "Beat 8",
+  "Pattern 5",
+  "Pattern 6",
+  "Pattern 7",
+  "Pattern 8",
 ];

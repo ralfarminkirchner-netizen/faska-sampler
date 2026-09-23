@@ -3,7 +3,7 @@ import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import appCss from "../styles.css?url";
 
-const APP_NAME = "FASKA SAMPLER";
+const APP_NAME = "FASKA VOXLAB";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -11,10 +11,10 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: APP_NAME },
-      { name: "theme-color", content: "#fff6ea" },
+      { name: "theme-color", content: "#0b0b0d" },
       {
         name: "description",
-        content: "FASKA SAMPLER — Stimme, Pads und Beats, groß und freundlich.",
+        content: "FASKA VOXLAB — Stimme, leuchtende Pads und Patterns.",
       },
     ],
     links: [
@@ -24,7 +24,7 @@ export const Route = createRootRoute({
       { rel: "apple-touch-icon", href: "/__grok/icon-180.png" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap",
       },
     ],
   }),

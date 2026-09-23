@@ -62,7 +62,7 @@ export function StudioApp() {
   return (
     <TooltipProvider delayDuration={250}>
       <StudioInner />
-      <Toaster theme="light" position="bottom-center" />
+      <Toaster theme="dark" position="bottom-right" />
     </TooltipProvider>
   );
 }
@@ -138,20 +138,23 @@ function StartScreen({
 }) {
   return (
     <main className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-bg px-5 text-fg">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(225,90,58,0.16),transparent_55%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(94,234,212,0.06),transparent_55%)]" />
       <div className="relative flex w-full max-w-lg flex-col items-center gap-8">
-        <p className="text-lg font-extrabold tracking-wide text-muted">Stimme · Pads · Beats</p>
-        <h1 className="font-display text-6xl font-extrabold tracking-tight text-fg sm:text-8xl">FASKA</h1>
-        <p className="text-2xl font-extrabold tracking-wide text-accent">SAMPLER</p>
-        <p className="max-w-md text-center text-xl leading-relaxed text-muted">
-          Große bunte Pads. Stimme verändern. Einen Beat bauen. Einfach tippen.
+        <p className="font-mono text-[11px] tracking-[0.28em] text-muted uppercase">Voice · Pads · Pattern</p>
+        <h1 className="text-center font-display text-5xl font-semibold tracking-[0.14em] text-fg sm:text-7xl">
+          FASKA
+          <span className="mt-1 block text-[0.62em] tracking-[0.28em] text-accent">VOXLAB</span>
+        </h1>
+        <p className="max-w-sm text-center text-sm leading-relaxed text-muted">
+          Stimme morphen, Beats auf 16 Pads legen, Patterns loopen. Sampler, Soundbanks und Spuren in einem
+          Gerät.
         </p>
-        <div className="grid w-64 grid-cols-4 gap-2">
+        <div className="grid w-56 grid-cols-4 gap-1.5">
           {Array.from({ length: 16 }, (_, i) => (
             <div
               key={i}
-              className="pad-key aspect-square rounded-xl"
-              data-row={Math.floor(i / 4)}
+              className="pad-key aspect-square rounded-sm"
+              data-pad={i}
               data-on={i === 10 ? "true" : "false"}
             />
           ))}
@@ -166,7 +169,7 @@ function StartScreen({
           disabled={booting}
           className="min-w-48"
         >
-          {booting ? bootMsg || "Laden…" : "Los geht's"}
+          {booting ? bootMsg || "Laden…" : "Session starten"}
         </Button>
       </div>
     </main>
@@ -179,20 +182,21 @@ function Desk() {
   return (
     <div className="flex min-h-dvh flex-col bg-bg text-fg">
       <TransportBar />
-      <div className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col gap-4 p-4 pb-24 lg:pb-6">
-        <div className="grid gap-4 lg:grid-cols-[minmax(0,340px)_minmax(0,1fr)_minmax(0,320px)]">
-          <section className={cn("min-w-0", tab !== "voice" && "hidden lg:block")}>
-            <VoicePanel />
-          </section>
-          <section className={cn("flex min-w-0 flex-col gap-4", tab !== "pads" && "max-lg:hidden")}>
-            <PadGrid />
-            <PadInspector />
-          </section>
-          <section className={cn("min-w-0", tab !== "mix" && "max-lg:hidden")}>
-            <SideDock />
-          </section>
-        </div>
-        <section className={cn("min-w-0", tab !== "pattern" && "max-lg:hidden")}>
+      <div className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col gap-3 p-3 pb-20 lg:grid lg:grid-cols-[minmax(0,280px)_minmax(0,1fr)_minmax(0,300px)] lg:pb-3">
+        <section className={cn("min-w-0", tab !== "voice" && "hidden lg:block")}>
+          <VoicePanel />
+        </section>
+        <section className={cn("flex min-w-0 flex-col gap-3", tab !== "pads" && "max-lg:hidden")}>
+          <PadGrid />
+          <PadInspector />
+          <div className="max-lg:hidden">
+            <PatternRack />
+          </div>
+        </section>
+        <section className={cn("min-w-0", tab !== "mix" && "max-lg:hidden")}>
+          <SideDock />
+        </section>
+        <section className={cn("min-w-0 lg:hidden", tab !== "pattern" && "max-lg:hidden")}>
           <PatternRack />
         </section>
       </div>
@@ -204,7 +208,7 @@ function Desk() {
                 type="button"
                 onClick={() => useStudio.getState().set({ tab: t.id })}
                 className={cn(
-                  "flex h-16 w-full items-center justify-center text-lg font-extrabold",
+                  "flex h-14 w-full items-center justify-center text-xs font-medium tracking-wide uppercase",
                   tab === t.id ? "text-accent" : "text-muted",
                 )}
               >
@@ -259,50 +263,54 @@ function TransportBar() {
   const playing = useStudio((s) => s.playing);
   const recording = useStudio((s) => s.recording);
   const bpm = useStudio((s) => s.bpm);
+  const swing = useStudio((s) => s.swing);
   const bar = useStudio((s) => s.bar);
+  const beat = useStudio((s) => s.beat);
+  const step = useStudio((s) => s.step);
   const click = useStudio((s) => s.click);
   const kitId = useStudio((s) => s.kitId);
   const preset = useStudio((s) => s.voicePreset);
 
   return (
-    <header className="border-b border-border bg-surface px-4 py-3">
-      <div className="mx-auto flex w-full max-w-[1440px] flex-wrap items-center gap-3">
+    <header className="border-b border-border bg-surface px-3 py-2">
+      <div className="mx-auto flex w-full max-w-[1400px] flex-wrap items-center gap-3">
         <div className="flex items-center gap-3">
-          <span className="font-display text-3xl font-extrabold tracking-tight">FASKA</span>
-          <div className="lcd hidden h-14 min-w-[240px] items-center rounded-xl px-4 text-base leading-tight sm:flex">
+          <span className="font-display text-xl font-semibold tracking-[0.16em]">
+            FASKA
+            <span className="ml-2 font-mono text-[10px] tracking-[0.22em] text-accent">VOXLAB</span>
+          </span>
+          <div className="lcd hidden h-10 min-w-[220px] items-center rounded-md px-3 text-[11px] leading-tight sm:flex">
             <div>
               <div>
-                {bpm} BPM · Takt {bar + 1}
+                BPM {bpm.toString().padStart(3, "0")} · 4/4 · {String(bar + 1).padStart(2, "0")}:
+                {String(beat + 1)}:{String(step + 1).padStart(2, "0")}
               </div>
-              <div className="text-sm opacity-80">
+              <div className="opacity-80">
                 {kitId.toUpperCase()} · {preset.toUpperCase()}
               </div>
             </div>
           </div>
         </div>
-        <div className="flex w-full flex-wrap items-center gap-2 sm:ml-auto sm:w-auto">
+        <div className="ml-auto flex items-center gap-1.5">
           <Button
             variant="rec"
-            size="lg"
+            size="icon"
             aria-label="Aufnahme"
             onClick={() => void toggleRecord()}
-            className={cn("min-w-0 flex-1 sm:min-w-36 sm:flex-none", recording && "animate-pulse")}
+            className={cn(recording && "animate-pulse")}
           >
-            <Circle className="size-4 fill-current" />
-            {recording ? "Stop" : "Aufnahme"}
+            <Circle className="size-3.5 fill-current" />
           </Button>
           <Button
             variant={playing ? "accent" : "secondary"}
-            size="lg"
+            size="icon"
             aria-label={playing ? "Stop" : "Play"}
             onClick={togglePlay}
-            className="min-w-0 flex-1 sm:min-w-32 sm:flex-none"
           >
-            {playing ? <Square className="size-4 fill-current" /> : <Play className="size-4 fill-current" />}
-            {playing ? "Stop" : "Play"}
+            {playing ? <Square className="size-3.5 fill-current" /> : <Play className="size-3.5 fill-current" />}
           </Button>
-          <label className="flex items-center gap-2 pl-2 text-base font-extrabold text-muted">
-            Klick
+          <label className="flex items-center gap-2 pl-2 text-[11px] uppercase tracking-wide text-muted">
+            Click
             <Switch
               checked={click}
               onCheckedChange={(on) => useStudio.getState().set({ click: on })}
@@ -310,8 +318,8 @@ function TransportBar() {
             />
           </label>
         </div>
-        <div className="flex w-full items-center gap-3 sm:min-w-[280px] sm:flex-1">
-          <span className="w-12 font-mono text-lg font-extrabold tabular-nums text-fg">{bpm}</span>
+        <div className="flex w-full items-center gap-3 sm:w-auto sm:min-w-[240px]">
+          <span className="w-10 font-mono text-xs tabular-nums text-muted">{bpm}</span>
           <Slider
             min={60}
             max={180}
@@ -324,7 +332,22 @@ function TransportBar() {
             }}
             aria-label="Tempo"
           />
-          <span className="font-mono text-base font-extrabold text-muted">BPM</span>
+          <span className="w-8 font-mono text-[10px] text-subtle">BPM</span>
+        </div>
+        <div className="hidden items-center gap-3 md:flex md:min-w-[180px]">
+          <span className="font-mono text-[10px] text-subtle">SWING</span>
+          <Slider
+            min={0}
+            max={0.4}
+            step={0.01}
+            value={[swing]}
+            onValueChange={([v]) => {
+              const n = v ?? 0;
+              useStudio.getState().set({ swing: n });
+              engine.setSwing(n);
+            }}
+            aria-label="Swing"
+          />
         </div>
       </div>
     </header>
@@ -397,9 +420,9 @@ function VoicePanel() {
   };
 
   return (
-    <div className="panel flex flex-col gap-4 p-4">
+    <div className="panel flex flex-col gap-3 p-3">
       <header className="flex items-center justify-between">
-        <h2 className="font-display text-2xl font-extrabold">Stimme</h2>
+        <h2 className="font-display text-lg tracking-wide">STIMME</h2>
         <div className="flex gap-1">
           <Button
             size="iconSm"
@@ -430,8 +453,8 @@ function VoicePanel() {
         </div>
       </header>
 
-      <div className="flex items-center justify-between text-base font-extrabold text-muted">
-        <span>Höhe {pitch > 0 ? `+${pitch}` : pitch}</span>
+      <div className="flex items-center justify-between text-[11px] uppercase tracking-wide text-muted">
+        <span>Morph {pitch > 0 ? `+${pitch}` : pitch}</span>
         <label className="flex items-center gap-2">
           Monitor
           <Switch
@@ -456,18 +479,21 @@ function VoicePanel() {
         aria-label="Pitch Morph"
       />
 
-      <div className="grid grid-cols-2 gap-2 lg:max-h-[68vh] lg:overflow-y-auto lg:pr-1">
+      <div className="grid grid-cols-2 gap-1.5">
         {VOICE_PRESETS.map((p) => (
           <button
             key={p.id}
             type="button"
             onClick={() => applyPreset(p.id)}
             className={cn(
-              "flex h-16 items-center justify-center rounded-2xl px-3 text-center text-lg font-extrabold ring-1 ring-border transition-colors duration-(--motion-quick)",
+              "flex h-9 flex-col items-start justify-center rounded-md px-2 text-left ring-1 ring-border transition-colors duration-(--motion-quick)",
               preset === p.id ? "bg-accent text-accent-fg ring-accent" : "bg-surface-2 text-fg hover:bg-surface-3",
             )}
           >
-            {p.name}
+            <span className="text-xs font-medium">{p.name}</span>
+            <span className={cn("font-mono text-[9px] uppercase", preset === p.id ? "opacity-80" : "text-subtle")}>
+              {p.tag}
+            </span>
           </button>
         ))}
       </div>
@@ -490,7 +516,7 @@ function VoicePanel() {
       </div>
 
       <div className="flex items-center justify-between">
-        <span className="text-base font-extrabold text-muted">Melodie</span>
+        <span className="text-[11px] uppercase tracking-wide text-muted">Melodie</span>
         <Switch
           checked={melodyOn}
           onCheckedChange={(on) => useStudio.getState().set({ melodyOn: on })}
@@ -498,7 +524,7 @@ function VoicePanel() {
         />
       </div>
       <select
-        className="h-12 rounded-xl bg-surface-2 px-3 text-base text-fg ring-1 ring-border"
+        className="h-9 rounded-md bg-surface-2 px-2 text-xs text-fg ring-1 ring-border"
         value={scaleId}
         onChange={(e) => {
           const scale = SCALES.find((s) => s.id === e.target.value);
@@ -524,7 +550,7 @@ function VoicePanel() {
               next[i] = (n + 1) % 13;
               useStudio.getState().set({ melody: next });
             }}
-            className="h-14 rounded-2xl bg-surface-2 font-mono text-lg font-extrabold text-fg ring-1 ring-border"
+            className="h-8 rounded-xs bg-surface-2 font-mono text-[10px] text-muted ring-1 ring-border"
           >
             {n}
           </button>
@@ -532,9 +558,9 @@ function VoicePanel() {
       </div>
 
       <div>
-        <h3 className="mb-2 text-base font-extrabold text-muted">Spuren</h3>
+        <h3 className="mb-2 text-[11px] uppercase tracking-wide text-muted">Spuren</h3>
         {takes.length === 0 ? (
-          <p className="text-base text-muted">Noch keine Aufnahme. Aufnahme, Beispiel oder eine Datei.</p>
+          <p className="text-xs text-subtle">Noch keine Aufnahme. Rec, Beispiel oder Datei importieren.</p>
         ) : (
           <ul className="flex flex-col gap-2">
             {takes.map((t) => (
@@ -548,14 +574,14 @@ function VoicePanel() {
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    className="min-w-0 flex-1 text-left text-base font-extrabold"
+                    className="min-w-0 flex-1 text-left text-xs"
                     onClick={() => useStudio.getState().set({ selectedTake: t.id, voicePreset: t.presetId })}
                   >
                     {t.name} · {t.duration.toFixed(1)}s
                   </button>
                   <button
                     type="button"
-                    className="text-sm uppercase text-muted"
+                    className="text-[10px] uppercase text-muted"
                     onClick={() => {
                       engine.unlockAudio();
                       engine.previewTake(t.id, t);
@@ -565,7 +591,7 @@ function VoicePanel() {
                   </button>
                   <button
                     type="button"
-                    className="text-sm uppercase text-muted"
+                    className="text-[10px] uppercase text-muted"
                     onClick={() => {
                       engine.removeTakeBuffer(t.id);
                       const next = useStudio.getState().takes.filter((x) => x.id !== t.id);
@@ -576,7 +602,7 @@ function VoicePanel() {
                   </button>
                 </div>
                 <select
-                  className="h-12 rounded-xl bg-surface px-3 text-base text-fg ring-1 ring-border"
+                  className="h-8 rounded-xs bg-surface px-2 text-[11px] text-fg ring-1 ring-border"
                   value={t.presetId}
                   aria-label={`Effekt ${t.name}`}
                   onChange={(e) => {
@@ -595,7 +621,7 @@ function VoicePanel() {
                   ))}
                 </select>
                 <div className="flex items-center gap-2">
-                  <span className="w-8 shrink-0 font-mono text-sm text-muted">Vol</span>
+                  <span className="w-8 shrink-0 font-mono text-[10px] text-muted">Vol</span>
                   <Slider
                     min={0}
                     max={2}
@@ -604,7 +630,7 @@ function VoicePanel() {
                     onValueChange={([v]) => useStudio.getState().setTake(t.id, { volume: v ?? 1 })}
                     aria-label={`Lautstärke ${t.name}`}
                   />
-                  <span className="w-9 shrink-0 text-right font-mono text-sm tabular-nums text-muted">
+                  <span className="w-9 shrink-0 text-right font-mono text-[10px] tabular-nums text-muted">
                     {Math.round(t.volume * 100)}%
                   </span>
                 </div>
@@ -670,12 +696,12 @@ function PadGrid() {
   };
 
   return (
-    <div className="panel p-4">
-      <header className="mb-4 flex items-center justify-between gap-3">
-        <h2 className="font-display text-3xl font-extrabold tracking-tight">Pads</h2>
-        <Button size="lg" variant="secondary" onClick={() => fileRef.current?.click()}>
-          <Upload className="size-5" />
-          Datei auf Pad
+    <div className="panel p-3">
+      <header className="mb-3 flex items-center justify-between">
+        <h2 className="font-display text-lg tracking-wide">PADS</h2>
+        <Button size="sm" variant="secondary" onClick={() => fileRef.current?.click()}>
+          <Upload className="size-3.5" />
+          Auf Pad
         </Button>
         <input
           ref={fileRef}
@@ -689,31 +715,30 @@ function PadGrid() {
           }}
         />
       </header>
-      <div className="grid grid-cols-4 gap-3">
-        {PAD_ROWS.flatMap((row, ri) =>
-          row.map((index) => {
-            const pad = pads[index]!;
-            const on = flashing === index || selected === index;
-            return (
-              <button
-                key={index}
-                type="button"
-                onPointerDown={(e) => onHit(index, e)}
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => void onDrop(index, e)}
-                data-on={on ? "true" : "false"}
-                data-row={ri}
-                className="pad-key relative flex aspect-square min-h-0 min-w-0 flex-col items-start justify-end rounded-3xl p-2 text-left touch-manipulation lg:min-h-32 lg:p-3"
-                aria-label={pad.name}
-              >
-                <span className="absolute left-3 top-2 font-mono text-base font-extrabold text-fg/70">{index + 1}</span>
-                <span className={cn("w-full truncate text-lg font-extrabold", on ? "text-accent-fg" : "text-fg")}>
-                  {pad.name}
-                </span>
-              </button>
-            );
-          }),
-        )}
+      <div className="grid grid-cols-4 gap-2">
+        {PAD_ROWS.flat().map((index) => {
+          const pad = pads[index]!;
+          const on = flashing === index || selected === index;
+          return (
+            <button
+              key={index}
+              type="button"
+              onPointerDown={(e) => onHit(index, e)}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => void onDrop(index, e)}
+              data-pad={index}
+              data-on={on ? "true" : "false"}
+              className="pad-key relative flex aspect-square flex-col items-start justify-end rounded-md p-2 text-left touch-manipulation"
+              aria-label={pad.name}
+            >
+              <span className="absolute left-2 top-1.5 font-mono text-[10px] opacity-70">{index + 1}</span>
+              <span className="absolute right-2 top-1.5 font-mono text-[10px] uppercase opacity-70">
+                {KIT_PAD_KEYS[index]}
+              </span>
+              <span className="w-full truncate text-[11px] font-medium">{pad.name}</span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
@@ -735,12 +760,12 @@ function PadInspector() {
   const pad = useStudio((s) => s.pads[s.selectedPad]!);
   const selected = useStudio((s) => s.selectedPad);
   return (
-    <div className="panel flex flex-col gap-4 p-4">
-      <div className="flex items-center justify-between gap-3">
-        <h3 className="font-display text-2xl font-extrabold">Pad {selected + 1}</h3>
-        <span className="truncate text-lg font-extrabold text-muted">{pad.name}</span>
+    <div className="panel flex flex-col gap-3 p-3">
+      <div className="flex items-center justify-between">
+        <h3 className="font-display tracking-wide">PAD {selected + 1}</h3>
+        <span className="text-xs text-muted">{pad.name}</span>
       </div>
-      <label className="text-base font-extrabold text-muted">Höhe {pad.pitch}</label>
+      <label className="text-[11px] uppercase tracking-wide text-muted">Pitch {pad.pitch}</label>
       <Slider
         min={-12}
         max={12}
@@ -748,7 +773,7 @@ function PadInspector() {
         value={[pad.pitch]}
         onValueChange={([v]) => useStudio.getState().updatePad(selected, { pitch: v ?? 0 })}
       />
-      <label className="text-base font-extrabold text-muted">Lautstärke</label>
+      <label className="text-[11px] uppercase tracking-wide text-muted">Volume</label>
       <Slider
         min={0}
         max={1}
@@ -756,9 +781,9 @@ function PadInspector() {
         value={[pad.volume]}
         onValueChange={([v]) => useStudio.getState().updatePad(selected, { volume: v ?? 0.9 })}
       />
-      <label className="text-base font-extrabold text-muted">Länge im Takt</label>
+      <label className="text-[11px] uppercase tracking-wide text-muted">Fit auf Takt</label>
       <select
-        className="h-12 rounded-xl bg-surface-2 px-3 text-base ring-1 ring-border"
+        className="h-9 rounded-md bg-surface-2 px-2 text-xs ring-1 ring-border"
         value={pad.stretch}
         onChange={(e) =>
           useStudio.getState().updatePad(selected, { stretch: e.target.value as StretchMode })
@@ -803,18 +828,18 @@ function PatternRack() {
   const grid = patterns[current]!;
 
   return (
-    <div className="panel p-4">
-      <header className="mb-4 flex flex-wrap items-center gap-2">
-        <h2 className="font-display text-2xl font-extrabold">Beat</h2>
-        <div className="flex flex-wrap gap-2">
+    <div className="panel p-3">
+      <header className="mb-3 flex flex-wrap items-center gap-2">
+        <h2 className="font-display text-lg tracking-wide">PATTERN</h2>
+        <div className="flex flex-wrap gap-1">
           {PATTERN_NAMES.map((name, i) => (
             <button
               key={name}
               type="button"
               onClick={() => useStudio.getState().set({ currentPattern: i })}
               className={cn(
-                "h-14 rounded-2xl px-4 text-base font-extrabold ring-1 ring-border",
-                current === i ? "bg-accent text-accent-fg" : "bg-surface-2 text-fg",
+                "h-8 rounded-md px-2 text-[11px] uppercase tracking-wide ring-1 ring-border",
+                current === i ? "bg-accent text-accent-fg" : "bg-surface-2 text-muted",
               )}
             >
               {name}
@@ -835,13 +860,13 @@ function PatternRack() {
           Clear
         </Button>
       </header>
-      <div className="min-w-0 overflow-x-auto">
-        <div className="min-w-[980px]">
+      <div className="overflow-x-auto">
+        <div className="min-w-[640px]">
           {pads.map((pad, pi) => (
-            <div key={pad.index} className="mb-2 flex items-center gap-2">
+            <div key={pad.index} className="mb-1 flex items-center gap-1">
               <button
                 type="button"
-                className="w-28 shrink-0 truncate text-left text-base font-extrabold text-fg"
+                className="w-20 shrink-0 truncate text-left text-[11px] text-muted"
                 onClick={() => {
                   engine.tapPad(pi);
                   useStudio.getState().set({ selectedPad: pi });
@@ -849,7 +874,7 @@ function PatternRack() {
               >
                 {pad.name}
               </button>
-              <div className="grid flex-1 grid-cols-16 gap-1.5">
+              <div className="grid flex-1 grid-cols-16 gap-1">
                 {Array.from({ length: STEP_COUNT }, (_, si) => {
                   const on = Boolean(grid[pi]?.[si]);
                   return (
@@ -858,7 +883,7 @@ function PatternRack() {
                       type="button"
                       onClick={() => useStudio.getState().toggleStep(pi, si)}
                       className={cn(
-                        "h-12 min-w-10 rounded-xl ring-1 ring-border",
+                        "h-6 rounded-xs ring-1 ring-border",
                         on ? "step-on" : si % 4 === 0 ? "bg-surface-3" : "bg-surface-2",
                         playing && step === si && "step-play",
                       )}
@@ -877,7 +902,7 @@ function PatternRack() {
 
 function SideDock() {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       <Soundbanks />
       <SamplerPanel />
       <FxRackPanel />
@@ -911,9 +936,10 @@ function Soundbanks() {
     }
   };
   return (
-    <div className="panel p-4">
-      <h2 className="mb-3 font-display text-2xl font-extrabold">Klänge</h2>
-      <div className="grid grid-cols-2 gap-2">
+    <div className="panel p-3">
+      <h2 className="mb-2 font-display text-lg tracking-wide">SOUNDBANKS</h2>
+      <p className="mb-3 text-xs text-subtle">Acht Kits — auf die 16 Pads legen.</p>
+      <div className="grid grid-cols-2 gap-1.5">
         {KIT_META.map((k) => (
           <button
             key={k.id}
@@ -921,11 +947,12 @@ function Soundbanks() {
             disabled={loading}
             onClick={() => void load(k.id)}
             className={cn(
-              "min-h-16 rounded-2xl px-3 py-3 text-left text-lg font-extrabold leading-tight ring-1 ring-border",
-              kitId === k.id ? "bg-accent text-accent-fg" : "bg-surface-2 text-fg hover:bg-surface-3",
+              "rounded-md px-2 py-2 text-left ring-1 ring-border",
+              kitId === k.id ? "bg-accent text-accent-fg" : "bg-surface-2 hover:bg-surface-3",
             )}
           >
-            {k.name}
+            <div className="text-xs font-medium">{k.name}</div>
+            <div className={cn("text-[10px]", kitId === k.id ? "opacity-80" : "text-subtle")}>{k.blurb}</div>
           </button>
         ))}
       </div>
@@ -955,9 +982,9 @@ function SamplerPanel() {
   };
 
   return (
-    <div className="panel p-4">
-      <header className="mb-3 flex items-center justify-between">
-        <h2 className="font-display text-2xl font-extrabold">Schneiden</h2>
+    <div className="panel p-3">
+      <header className="mb-2 flex items-center justify-between">
+        <h2 className="font-display text-lg tracking-wide">SAMPLER</h2>
         <Button size="iconSm" variant="secondary" onClick={() => fileRef.current?.click()} aria-label="Sample importieren">
           <Disc3 className="size-3.5" />
         </Button>
@@ -974,10 +1001,10 @@ function SamplerPanel() {
         />
       </header>
       <Waveform wave={wave} start={duration ? start / duration : 0} end={duration ? end / duration : 1} />
-      <p className="mt-2 truncate text-base font-extrabold text-muted">{name || "Noch kein Sample"}</p>
+      <p className="mt-1 truncate text-xs text-muted">{name || "Kein Sample"}</p>
       {duration > 0 && (
         <>
-          <label className="mt-3 text-base font-extrabold text-muted">Anfang</label>
+          <label className="mt-2 text-[11px] uppercase tracking-wide text-muted">Start</label>
           <Slider
             min={0}
             max={duration}
@@ -987,7 +1014,7 @@ function SamplerPanel() {
               useStudio.getState().set({ samplerStart: Math.min(v ?? 0, end - 0.02) })
             }
           />
-          <label className="text-base font-extrabold text-muted">Ende</label>
+          <label className="text-[11px] uppercase tracking-wide text-muted">Ende</label>
           <Slider
             min={0}
             max={duration}
@@ -1062,22 +1089,22 @@ function FxRackPanel() {
     engine.setMasterFx(next);
   };
   const knobs: { key: keyof typeof fx; label: string }[] = [
-    { key: "reverb", label: "Hall" },
-    { key: "delay", label: "Echo" },
-    { key: "dist", label: "Zerre" },
-    { key: "crush", label: "Krümel" },
+    { key: "reverb", label: "Verb" },
+    { key: "delay", label: "Delay" },
+    { key: "dist", label: "Drive" },
+    { key: "crush", label: "Crush" },
     { key: "cutoff", label: "Filter" },
-    { key: "chorus", label: "Chor" },
-    { key: "phaser", label: "Wabern" },
-    { key: "gate", label: "Tor" },
+    { key: "chorus", label: "Chorus" },
+    { key: "phaser", label: "Phaser" },
+    { key: "gate", label: "Gate" },
   ];
   return (
-    <div className="panel p-4">
-      <h2 className="mb-3 font-display text-2xl font-extrabold">Effekte</h2>
-      <div className="flex flex-col gap-3">
+    <div className="panel p-3">
+      <h2 className="mb-3 font-display text-lg tracking-wide">FX</h2>
+      <div className="grid grid-cols-4 gap-2">
         {knobs.map((k) => (
-          <label key={k.key} className="flex flex-col gap-1">
-            <span className="text-base font-extrabold text-muted">{k.label}</span>
+          <div key={k.key} className="flex flex-col items-center gap-1">
+            <span className="text-[10px] uppercase tracking-wide text-muted">{k.label}</span>
             <Slider
               min={0}
               max={1}
@@ -1086,7 +1113,7 @@ function FxRackPanel() {
               onValueChange={([v]) => set(k.key, v ?? 0)}
               aria-label={k.label}
             />
-          </label>
+          </div>
         ))}
       </div>
     </div>
@@ -1099,16 +1126,16 @@ function MixerPanel() {
   const take = takes.find((t) => t.id === selected);
   if (!take) {
     return (
-      <div className="panel p-4">
-        <h2 className="font-display text-2xl font-extrabold">Mix</h2>
-        <p className="mt-2 text-base text-muted">Eine Spur antippen. Dann Lautstärke und Effekt.</p>
+      <div className="panel p-3">
+        <h2 className="font-display text-lg tracking-wide">MIX</h2>
+        <p className="mt-2 text-xs text-subtle">Spur wählen, um Volume, Preset und Takt-Fit zu setzen.</p>
       </div>
     );
   }
   return (
-    <div className="panel flex flex-col gap-4 p-4">
-      <h2 className="font-display text-2xl font-extrabold">Mix · {take.name}</h2>
-      <label className="text-base font-extrabold text-muted">
+    <div className="panel flex flex-col gap-3 p-3">
+      <h2 className="font-display text-lg tracking-wide">MIX · {take.name}</h2>
+      <label className="text-[11px] uppercase tracking-wide text-muted">
         Lautstärke {Math.round(take.volume * 100)}%
       </label>
       <Slider
@@ -1118,7 +1145,7 @@ function MixerPanel() {
         value={[take.volume]}
         onValueChange={([v]) => useStudio.getState().setTake(take.id, { volume: v ?? 1.25 })}
       />
-      <label className="text-base font-extrabold text-muted">Höhe {take.pitch}</label>
+      <label className="text-[11px] uppercase tracking-wide text-muted">Pitch {take.pitch}</label>
       <Slider
         min={-12}
         max={12}
@@ -1126,7 +1153,7 @@ function MixerPanel() {
         value={[take.pitch]}
         onValueChange={([v]) => useStudio.getState().setTake(take.id, { pitch: v ?? 0 })}
       />
-      <label className="text-base font-extrabold text-muted">Start-Takt</label>
+      <label className="text-[11px] uppercase tracking-wide text-muted">Start-Takt</label>
       <Slider
         min={0}
         max={3}
@@ -1134,9 +1161,9 @@ function MixerPanel() {
         value={[take.startBar]}
         onValueChange={([v]) => useStudio.getState().setTake(take.id, { startBar: v ?? 0 })}
       />
-      <label className="text-base font-extrabold text-muted">Länge im Takt</label>
+      <label className="text-[11px] uppercase tracking-wide text-muted">Takt-Fit</label>
       <select
-        className="h-12 rounded-xl bg-surface-2 px-3 text-base ring-1 ring-border"
+        className="h-9 rounded-md bg-surface-2 px-2 text-xs ring-1 ring-border"
         value={take.stretch}
         onChange={(e) =>
           useStudio.getState().setTake(take.id, { stretch: e.target.value as StretchMode })
@@ -1148,9 +1175,9 @@ function MixerPanel() {
           </option>
         ))}
       </select>
-      <label className="text-base font-extrabold text-muted">Effekt</label>
+      <label className="text-[11px] uppercase tracking-wide text-muted">Effekt</label>
       <select
-        className="h-12 rounded-xl bg-surface-2 px-3 text-base ring-1 ring-border"
+        className="h-9 rounded-md bg-surface-2 px-2 text-xs ring-1 ring-border"
         value={take.presetId}
         onChange={(e) => {
           const presetId = e.target.value as VoicePresetId;

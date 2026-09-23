@@ -1,6 +1,6 @@
-# FASKA SAMPLER
+# FASKA VOXLAB
 
-Stimme, Pads und Beats — groß, warm und einfach zu tippen.
+Dunkles Studio: Stimme, leuchtende Pads, Patterns und Sampler.
 
 ## Lokal
 
