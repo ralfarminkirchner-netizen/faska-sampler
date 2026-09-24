@@ -155,6 +155,9 @@ export default defineConfig(({ command, isPreview }) => ({
     host: "127.0.0.1",
     port: 8081,
     strictPort: true,
+    // Railway (and any later custom domain) is blocked otherwise:
+    // "This host is not allowed."
+    allowedHosts: true,
   },
   resolve: { tsconfigPaths: true },
   plugins: [
