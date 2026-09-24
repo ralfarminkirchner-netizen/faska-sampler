@@ -142,6 +142,25 @@ function authPopupPlugin(): Plugin {
   };
 }
 
+function previewOptions() {
+  // Railway serves `vite preview` as the public process. Everywhere else the
+  // built output stays on loopback :8081 so it cannot become the live preview.
+  const onRailway = Boolean(process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID);
+  if (!onRailway) {
+    return { host: "127.0.0.1" as const, port: 8081, strictPort: true };
+  }
+  const port = Number(process.env.PORT);
+  const allowedHosts = [".railway.app", ".up.railway.app"];
+  const publicDomain = process.env.RAILWAY_PUBLIC_DOMAIN?.trim();
+  if (publicDomain) allowedHosts.push(publicDomain);
+  return {
+    host: "0.0.0.0" as const,
+    port: Number.isInteger(port) && port > 0 ? port : 8080,
+    strictPort: true,
+    allowedHosts,
+  };
+}
+
 // `0.0.0.0:8080` is the live-preview contract — don't change host/port.
 // The dev server starts once `src/router.tsx` and `src/routes/` exist — see
 // AGENTS.md § "First scaffold".
@@ -151,13 +170,10 @@ export default defineConfig(({ command, isPreview }) => ({
     port: 8080,
     strictPort: true,
   },
-  preview: {
-    host: "127.0.0.1",
-    port: 8081,
-    strictPort: true,
-    // Railway (and any later custom domain) is blocked otherwise:
-    // "This host is not allowed."
-    allowedHosts: true,
+  preview: previewOptions(),
+  build: {
+    reportCompressedSize: false,
+    target: "es2022",
   },
   resolve: { tsconfigPaths: true },
   plugins: [
